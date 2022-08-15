@@ -120,7 +120,7 @@ ZSTD_compressSubBlock_literal(const HUF_CElt* hufTable,
             break;
         }
     default:  /* not possible : lhSize is {3,4,5} */
-        assert(0);
+        _assume(0);
     }
     *entropyWritten = 1;
     DEBUGLOG(5, "Compressed literals: %u -> %u", (U32)litSize, (U32)(op-ostart));
@@ -324,8 +324,7 @@ static size_t ZSTD_estimateSubBlockSize_literal(const BYTE* literals, size_t lit
             if (writeEntropy) cLitSizeEstimate += hufMetadata->hufDesSize;
             return cLitSizeEstimate + literalSectionHeaderSize;
     }   }
-    assert(0); /* impossible */
-    return 0;
+    _assume(0); /* impossible */
 }
 
 static size_t ZSTD_estimateSubBlockSize_symbolType(symbolEncodingType_e type,

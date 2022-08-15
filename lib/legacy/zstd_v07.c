@@ -8,6 +8,7 @@
  * You may select, at your option, one of the above-listed licenses.
  */
 
+#if (ZSTD_LEGACY_SUPPORT != 0 && ZSTD_LEGACY_SUPPORT <= 7)
 
 /*- Dependencies -*/
 #include <stddef.h>     /* size_t, ptrdiff_t */
@@ -4539,3 +4540,7 @@ size_t ZBUFFv07_decompressContinue(ZBUFFv07_DCtx* zbd,
 ***************************************/
 size_t ZBUFFv07_recommendedDInSize(void)  { return ZSTDv07_BLOCKSIZE_ABSOLUTEMAX + ZSTDv07_blockHeaderSize /* block header size*/ ; }
 size_t ZBUFFv07_recommendedDOutSize(void) { return ZSTDv07_BLOCKSIZE_ABSOLUTEMAX; }
+
+#else
+static void Empty() {};
+#endif

@@ -8,6 +8,7 @@
  * You may select, at your option, one of the above-listed licenses.
  */
 
+#if (ZSTD_LEGACY_SUPPORT != 0 && ZSTD_LEGACY_SUPPORT <= 2)
 
 #include <stddef.h>    /* size_t, ptrdiff_t */
 #include "zstd_v02.h"
@@ -3516,3 +3517,7 @@ size_t ZSTDv02_decompressContinue(ZSTDv02_Dctx* dctx, void* dst, size_t maxDstSi
 {
     return ZSTD_decompressContinue((ZSTD_DCtx*)dctx, dst, maxDstSize, src, srcSize);
 }
+
+#else
+static void Empty() {};
+#endif

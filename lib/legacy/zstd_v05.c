@@ -8,6 +8,7 @@
  * You may select, at your option, one of the above-listed licenses.
  */
 
+#if (ZSTD_LEGACY_SUPPORT != 0 && ZSTD_LEGACY_SUPPORT <= 5)
 
 /*- Dependencies -*/
 #include "zstd_v05.h"
@@ -4048,3 +4049,7 @@ const char* ZBUFFv05_getErrorName(size_t errorCode) { return ERR_getErrorName(er
 
 size_t ZBUFFv05_recommendedDInSize(void)  { return BLOCKSIZE + ZBUFFv05_blockHeaderSize /* block header size*/ ; }
 size_t ZBUFFv05_recommendedDOutSize(void) { return BLOCKSIZE; }
+
+#else
+static void Empty() {};
+#endif

@@ -344,7 +344,7 @@ MEM_STATIC  FORCE_INLINE_ATTR size_t BIT_lookBits(const BIT_DStream_t*  bitD, U3
 MEM_STATIC size_t BIT_lookBitsFast(const BIT_DStream_t* bitD, U32 nbBits)
 {
     U32 const regMask = sizeof(bitD->bitContainer)*8 - 1;
-    assert(nbBits >= 1);
+    _assume(nbBits >= 1);
     return (bitD->bitContainer << (bitD->bitsConsumed & regMask)) >> (((regMask+1)-nbBits) & regMask);
 }
 
@@ -369,7 +369,7 @@ MEM_STATIC FORCE_INLINE_ATTR size_t BIT_readBits(BIT_DStream_t* bitD, unsigned n
 MEM_STATIC size_t BIT_readBitsFast(BIT_DStream_t* bitD, unsigned nbBits)
 {
     size_t const value = BIT_lookBitsFast(bitD, nbBits);
-    assert(nbBits >= 1);
+    _assume(nbBits >= 1);
     BIT_skipBits(bitD, nbBits);
     return value;
 }

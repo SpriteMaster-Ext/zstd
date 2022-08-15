@@ -258,7 +258,7 @@ static size_t ZSTD_ldm_fillFastTables(ZSTD_matchState_t* ms,
     case ZSTD_btultra2:
         break;
     default:
-        assert(0);  /* not possible : not a valid strategy id */
+        _assume(0);  /* not possible : not a valid strategy id */
     }
 
     return 0;
@@ -289,7 +289,7 @@ void ZSTD_ldm_fillHashTable(
         for (n = 0; n < numSplits; n++) {
             if (ip + splits[n] >= istart + minMatchLength) {
                 BYTE const* const split = ip + splits[n] - minMatchLength;
-                U64 const xxhash = XXH64(split, minMatchLength, 0);
+                U64 const xxhash = XXH3_64bits(split, minMatchLength);
                 U32 const hash = (U32)(xxhash & (((U32)1 << hBits) - 1));
                 ldmEntry_t entry;
 
@@ -367,7 +367,7 @@ static size_t ZSTD_ldm_generateSequences_internal(
 
         for (n = 0; n < numSplits; n++) {
             BYTE const* const split = ip + splits[n] - minMatchLength;
-            U64 const xxhash = XXH64(split, minMatchLength, 0);
+            U64 const xxhash = XXH3_64bits(split, minMatchLength);
             U32 const hash = (U32)(xxhash & (((U32)1 << hBits) - 1));
 
             candidates[n].split = split;

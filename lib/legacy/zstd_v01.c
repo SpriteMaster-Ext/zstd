@@ -8,6 +8,7 @@
  * You may select, at your option, one of the above-listed licenses.
  */
 
+#if (ZSTD_LEGACY_SUPPORT != 0 && ZSTD_LEGACY_SUPPORT <= 1)
 
 /******************************************
 *  Includes
@@ -2156,3 +2157,7 @@ size_t ZSTDv01_decompressContinue(ZSTDv01_Dctx* dctx, void* dst, size_t maxDstSi
     }
 
 }
+
+#else
+static void Empty() {};
+#endif

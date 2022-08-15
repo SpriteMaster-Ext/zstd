@@ -50,15 +50,25 @@
 /*-*************************************
 *  Console display
 ***************************************/
+#define NO_DISPLAY 1
+
 #ifndef LOCALDISPLAYLEVEL
+#ifndef NO_DISPLAY
 static int g_displayLevel = 0;
+#else
+static const int g_displayLevel = 0;
+#endif
 #endif
 #undef  DISPLAY
+#ifndef NO_DISPLAY
 #define DISPLAY(...)                                                           \
   {                                                                            \
     fprintf(stderr, __VA_ARGS__);                                              \
     fflush(stderr);                                                            \
   }
+#else
+#define DISPLAY(...) ((void)0)
+#endif
 #undef  LOCALDISPLAYLEVEL
 #define LOCALDISPLAYLEVEL(displayLevel, l, ...)                                \
   if (displayLevel >= l) {                                                     \
@@ -68,10 +78,13 @@ static int g_displayLevel = 0;
 #define DISPLAYLEVEL(l, ...) LOCALDISPLAYLEVEL(g_displayLevel, l, __VA_ARGS__)
 
 #ifndef LOCALDISPLAYUPDATE
+#ifndef NO_DISPLAY
 static const clock_t g_refreshRate = CLOCKS_PER_SEC * 15 / 100;
 static clock_t g_time = 0;
 #endif
+#endif
 #undef  LOCALDISPLAYUPDATE
+#ifndef NO_DISPLAY
 #define LOCALDISPLAYUPDATE(displayLevel, l, ...)                               \
   if (displayLevel >= l) {                                                     \
     if ((clock() - g_time > g_refreshRate) || (displayLevel >= 4)) {             \
@@ -79,6 +92,9 @@ static clock_t g_time = 0;
       DISPLAY(__VA_ARGS__);                                                    \
     }                                                                          \
   }
+#else
+#define LOCALDISPLAYUPDATE(...) ((void)0)
+#endif
 #undef  DISPLAYUPDATE
 #define DISPLAYUPDATE(l, ...) LOCALDISPLAYUPDATE(g_displayLevel, l, __VA_ARGS__)
 
@@ -165,13 +181,13 @@ static COVER_segment_t FASTCOVER_selectSegment(const FASTCOVER_ctx_t *ctx,
 
   /* Try each segment (activeSegment) and save the best (bestSegment) */
   COVER_segment_t bestSegment = {0, 0, 0};
-  COVER_segment_t activeSegment;
-
   /* Reset the activeDmers in the segment */
-  /* The activeSegment starts at the beginning of the epoch. */
-  activeSegment.begin = begin;
-  activeSegment.end = begin;
-  activeSegment.score = 0;
+/* The activeSegment starts at the beginning of the epoch. */
+  COVER_segment_t activeSegment = {
+    .begin = begin,
+    .end = begin,
+    .score = 0
+  };
 
   /* Slide the activeSegment through the whole epoch.
    * Save the best segment in bestSegment.
@@ -322,7 +338,9 @@ FASTCOVER_ctx_init(FASTCOVER_ctx_t* ctx,
     const unsigned nbTrainSamples = splitPoint < 1.0 ? (unsigned)((double)nbSamples * splitPoint) : nbSamples;
     const unsigned nbTestSamples = splitPoint < 1.0 ? nbSamples - nbTrainSamples : nbSamples;
     const size_t trainingSamplesSize = splitPoint < 1.0 ? COVER_sum(samplesSizes, nbTrainSamples) : totalSamplesSize;
+#ifndef NO_DISPLAY
     const size_t testSamplesSize = splitPoint < 1.0 ? COVER_sum(samplesSizes + nbTrainSamples, nbTestSamples) : totalSamplesSize;
+#endif
 
     /* Checks */
     if (totalSamplesSize < MAX(d, sizeof(U64)) ||
@@ -362,7 +380,7 @@ FASTCOVER_ctx_init(FASTCOVER_ctx_t* ctx,
     ctx->accelParams = accelParams;
 
     /* The offsets of each file */
-    ctx->offsets = (size_t*)calloc((nbSamples + 1), sizeof(size_t));
+    ctx->offsets = (size_t*)calloc(((size_t)nbSamples + 1), sizeof(size_t));
     if (ctx->offsets == NULL) {
         DISPLAYLEVEL(1, "Failed to allocate scratch buffers \n");
         FASTCOVER_ctx_destroy(ctx);
@@ -556,7 +574,9 @@ ZDICT_trainFromBuffer_fastCover(void* dictBuffer, size_t dictBufferCapacity,
     ZDICT_cover_params_t coverParams;
     FASTCOVER_accel_t accelParams;
     /* Initialize global data */
+#ifndef NO_DISPLAY
     g_displayLevel = (int)parameters.zParams.notificationLevel;
+#endif
     /* Assign splitPoint and f if not provided */
     parameters.splitPoint = 1.0;
     parameters.f = parameters.f == 0 ? DEFAULT_F : parameters.f;
@@ -633,8 +653,10 @@ ZDICT_optimizeTrainFromBuffer_fastCover(
     const unsigned kMaxK = parameters->k == 0 ? 2000 : parameters->k;
     const unsigned kSteps = parameters->steps == 0 ? 40 : parameters->steps;
     const unsigned kStepSize = MAX((kMaxK - kMinK) / kSteps, 1);
+#ifndef NO_DISPLAY
     const unsigned kIterations =
         (1 + (kMaxD - kMinD) / 2) * (1 + (kMaxK - kMinK) / kStepSize);
+#endif
     const unsigned f = parameters->f == 0 ? DEFAULT_F : parameters->f;
     const unsigned accel = parameters->accel == 0 ? DEFAULT_ACCEL : parameters->accel;
     const unsigned shrinkDict = 0;
@@ -680,7 +702,9 @@ ZDICT_optimizeTrainFromBuffer_fastCover(
     FASTCOVER_convertToCoverParams(*parameters, &coverParams);
     accelParams = FASTCOVER_defaultAccelParameters[accel];
     /* Turn down global display level to clean up display at level 2 and below */
+#ifndef NO_DISPLAY
     g_displayLevel = displayLevel == 0 ? 0 : displayLevel - 1;
+#endif
     /* Loop through d first because each new value needs a new context */
     LOCALDISPLAYLEVEL(displayLevel, 2, "Trying %u different sets of parameters\n",
                       kIterations);

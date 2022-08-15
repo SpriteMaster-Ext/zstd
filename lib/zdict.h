@@ -8,8 +8,11 @@
  * You may select, at your option, one of the above-listed licenses.
  */
 
+#pragma once
 #ifndef DICTBUILDER_H_001
 #define DICTBUILDER_H_001
+
+#include "zstd.common.h"
 
 #if defined (__cplusplus)
 extern "C" {
@@ -21,20 +24,10 @@ extern "C" {
 
 
 /* =====   ZDICTLIB_API : control library symbols visibility   ===== */
-#ifndef ZDICTLIB_VISIBILITY
-#  if defined(__GNUC__) && (__GNUC__ >= 4)
-#    define ZDICTLIB_VISIBILITY __attribute__ ((visibility ("default")))
-#  else
-#    define ZDICTLIB_VISIBILITY
-#  endif
-#endif
-#if defined(ZSTD_DLL_EXPORT) && (ZSTD_DLL_EXPORT==1)
-#  define ZDICTLIB_API __declspec(dllexport) ZDICTLIB_VISIBILITY
-#elif defined(ZSTD_DLL_IMPORT) && (ZSTD_DLL_IMPORT==1)
-#  define ZDICTLIB_API __declspec(dllimport) ZDICTLIB_VISIBILITY /* It isn't required but allows to generate better code, saving a function pointer load from the IAT and an indirect jump.*/
-#else
-#  define ZDICTLIB_API ZDICTLIB_VISIBILITY
-#endif
+# define ZDICTLIB_API_USED ZSTD_EXPORT_API
+# define ZDICTLIB_ABI_USED ZSTD_EXPORT_ABI
+# define ZDICTLIB_API
+# define ZDICTLIB_ABI
 
 /*******************************************************************************
  * Zstd dictionary builder
@@ -196,7 +189,7 @@ extern "C" {
  *        In general, it's recommended to provide a few thousands samples, though this can vary a lot.
  *        It's recommended that total size of all samples be about ~x100 times the target size of dictionary.
  */
-ZDICTLIB_API size_t ZDICT_trainFromBuffer(void* dictBuffer, size_t dictBufferCapacity,
+ZDICTLIB_API_USED size_t ZDICTLIB_ABI_USED ZDICT_trainFromBuffer(void* dictBuffer, size_t dictBufferCapacity,
                                     const void* samplesBuffer,
                                     const size_t* samplesSizes, unsigned nbSamples);
 
@@ -257,8 +250,8 @@ ZDICTLIB_API size_t ZDICT_finalizeDictionary(void* dstDictBuffer, size_t maxDict
 /*======   Helper functions   ======*/
 ZDICTLIB_API unsigned ZDICT_getDictID(const void* dictBuffer, size_t dictSize);  /**< extracts dictID; @return zero if error (not a valid dictionary) */
 ZDICTLIB_API size_t ZDICT_getDictHeaderSize(const void* dictBuffer, size_t dictSize);  /* returns dict header size; returns a ZSTD error code on failure */
-ZDICTLIB_API unsigned ZDICT_isError(size_t errorCode);
-ZDICTLIB_API const char* ZDICT_getErrorName(size_t errorCode);
+ZDICTLIB_API_USED unsigned ZDICTLIB_ABI_USED ZDICT_isError(size_t errorCode);
+ZDICTLIB_API_USED const char* ZDICTLIB_ABI_USED ZDICT_getErrorName(size_t errorCode);
 
 
 

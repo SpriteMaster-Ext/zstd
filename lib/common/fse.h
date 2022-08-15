@@ -24,19 +24,17 @@ extern "C" {
 *  Dependencies
 ******************************************/
 #include "zstd_deps.h"    /* size_t, ptrdiff_t */
-
+#include "zstd.common.h"
 
 /*-*****************************************
 *  FSE_PUBLIC_API : control library symbols visibility
 ******************************************/
-#if defined(FSE_DLL_EXPORT) && (FSE_DLL_EXPORT==1) && defined(__GNUC__) && (__GNUC__ >= 4)
-#  define FSE_PUBLIC_API __attribute__ ((visibility ("default")))
-#elif defined(FSE_DLL_EXPORT) && (FSE_DLL_EXPORT==1)   /* Visual expected */
-#  define FSE_PUBLIC_API __declspec(dllexport)
-#elif defined(FSE_DLL_IMPORT) && (FSE_DLL_IMPORT==1)
-#  define FSE_PUBLIC_API __declspec(dllimport) /* It isn't required but allows to generate better code, saving a function pointer load from the IAT and an indirect jump.*/
+#if FSE_DLL_EXPORT == 1 || FSE_DLL_IMPORT == 1
+# define FSE_PUBLIC_API ZSTD_EXPORT_API
+# define FSE_PUBLIC_ABI ZSTD_EXPORT_ABI
 #else
-#  define FSE_PUBLIC_API
+# define FSE_PUBLIC_API
+# define FSE_PUBLIC_ABI
 #endif
 
 /*------   Version   ------*/

@@ -648,8 +648,7 @@ static size_t ZSTD_buildSeqTable(ZSTD_seqSymbol* DTableSpace, const ZSTD_seqSymb
             return headerSize;
         }
     default :
-        assert(0);
-        RETURN_ERROR(GENERIC, "impossible");
+        _assume(0);
     }
 }
 

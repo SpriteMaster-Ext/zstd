@@ -456,7 +456,7 @@ typedef struct {
     ZSTD_pthread_cond_t cond;
     ZSTD_CCtx_params params;
     ldmState_t ldmState;
-    XXH64_state_t xxhState;
+    XXH3_state_t xxhState;
     unsigned nextJobID;
     /* Protects ldmWindow.
      * Must be acquired after the main mutex when acquiring both.
@@ -485,7 +485,7 @@ ZSTDMT_serialState_reset(serialState_t* serialState,
     }
     serialState->nextJobID = 0;
     if (params.fParams.checksumFlag)
-        XXH64_reset(&serialState->xxhState, 0);
+        XXH3_64bits_reset(&serialState->xxhState);
     if (params.ldmParams.enableLdm == ZSTD_ps_enable) {
         ZSTD_customMem cMem = params.customMem;
         unsigned const hashLog = params.ldmParams.hashLog;
@@ -592,7 +592,7 @@ static void ZSTDMT_serialState_update(serialState_t* serialState,
             ZSTD_pthread_mutex_unlock(&serialState->ldmWindowMutex);
         }
         if (serialState->params.fParams.checksumFlag && src.size > 0)
-            XXH64_update(&serialState->xxhState, src.start, src.size);
+            XXH3_64bits_update(&serialState->xxhState, src.start, src.size);
     }
     /* Now it is the next jobs turn */
     serialState->nextJobID++;
@@ -1471,7 +1471,7 @@ static size_t ZSTDMT_flushProduced(ZSTDMT_CCtx* mtctx, ZSTD_outBuffer* output, u
         assert(srcConsumed <= srcSize);
         if ( (srcConsumed == srcSize)   /* job completed -> worker no longer active */
           && mtctx->jobs[wJobID].frameChecksumNeeded ) {
-            U32 const checksum = (U32)XXH64_digest(&mtctx->serial.xxhState);
+            U32 const checksum = (U32)XXH3_64bits_digest(&mtctx->serial.xxhState);
             DEBUGLOG(4, "ZSTDMT_flushProduced: writing checksum : %08X \n", checksum);
             MEM_writeLE32((char*)mtctx->jobs[wJobID].dstBuff.start + mtctx->jobs[wJobID].cSize, checksum);
             cSize += 4;

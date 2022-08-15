@@ -56,9 +56,101 @@ extern "C" {
 ***************************************/
 #undef MIN
 #undef MAX
-#define MIN(a,b) ((a)<(b) ? (a) : (b))
-#define MAX(a,b) ((a)>(b) ? (a) : (b))
-#define BOUNDED(min,val,max) (MAX(min,MIN(val,max)))
+
+#if __GNUC__
+#define ALWAYS_INLINE __attribute__((always_inline))
+#elif _MSC_VER
+#define ALWAYS_INLINE __forceinline
+#else
+#define ALWAYS_INLINE
+#endif
+
+#define ZSTD_LARGER_TYPE_EXPR(a, b) \
+  sizeof(a) >= sizeof(b) ? (a) : (b)
+
+#define ZSTD_DEFINE_MIN_GENERIC_TYPE(type, name) \
+  MEM_STATIC ALWAYS_INLINE type name ## _min(type a, type b) { \
+    return (a < b) ? a : b; \
+  }
+
+#ifndef WIN32
+# define ZSTD_SWITCH_SIZET double
+#else
+# define ZSTD_SWITCH_SIZET size_t
+#endif
+
+  ZSTD_DEFINE_MIN_GENERIC_TYPE(char, c);
+  ZSTD_DEFINE_MIN_GENERIC_TYPE(unsigned char, uc);
+  ZSTD_DEFINE_MIN_GENERIC_TYPE(short, s);
+  ZSTD_DEFINE_MIN_GENERIC_TYPE(unsigned short, us);
+  ZSTD_DEFINE_MIN_GENERIC_TYPE(int, i);
+  ZSTD_DEFINE_MIN_GENERIC_TYPE(unsigned int, ui);
+  ZSTD_DEFINE_MIN_GENERIC_TYPE(long, l);
+  ZSTD_DEFINE_MIN_GENERIC_TYPE(unsigned long, ul);
+  ZSTD_DEFINE_MIN_GENERIC_TYPE(long long, ll);
+  ZSTD_DEFINE_MIN_GENERIC_TYPE(unsigned long long, ull);
+  ZSTD_DEFINE_MIN_GENERIC_TYPE(const void*, p);
+  ZSTD_DEFINE_MIN_GENERIC_TYPE(const BYTE*, pb);
+
+#define MIN_GENERIC(a,b) _Generic(ZSTD_LARGER_TYPE_EXPR((a), (b)), \
+  char: c_min, \
+  unsigned char: uc_min, \
+  short: s_min, \
+  unsigned short: us_min, \
+  int: i_min, \
+  unsigned int: ui_min, \
+  long: l_min, \
+  unsigned long: ul_min, \
+  long long: ll_min, \
+  unsigned long long: ull_min, \
+  const void*: p_min, \
+  const BYTE*: pb_min \
+)((a), (b))
+
+#undef ZSTD_DEFINE_MIN_GENERIC_TYPE
+
+#define ZSTD_DEFINE_MAX_GENERIC_TYPE(type, name) \
+  MEM_STATIC ALWAYS_INLINE type name ## _max(type a, type b) { \
+    return (a >= b) ? a : b; \
+  }
+
+  ZSTD_DEFINE_MAX_GENERIC_TYPE(char, c);
+  ZSTD_DEFINE_MAX_GENERIC_TYPE(unsigned char, uc);
+  ZSTD_DEFINE_MAX_GENERIC_TYPE(short, s);
+  ZSTD_DEFINE_MAX_GENERIC_TYPE(unsigned short, us);
+  ZSTD_DEFINE_MAX_GENERIC_TYPE(int, i);
+  ZSTD_DEFINE_MAX_GENERIC_TYPE(unsigned int, ui);
+  ZSTD_DEFINE_MAX_GENERIC_TYPE(long, l);
+  ZSTD_DEFINE_MAX_GENERIC_TYPE(unsigned long, ul);
+  ZSTD_DEFINE_MAX_GENERIC_TYPE(long long, ll);
+  ZSTD_DEFINE_MAX_GENERIC_TYPE(unsigned long long, ull);
+  ZSTD_DEFINE_MAX_GENERIC_TYPE(const void*, p);
+  ZSTD_DEFINE_MAX_GENERIC_TYPE(const BYTE*, pb);
+
+#define MAX_GENERIC(a,b) _Generic(ZSTD_LARGER_TYPE_EXPR((a), (b)), \
+  char: c_max, \
+  unsigned char: uc_max, \
+  short: s_max, \
+  unsigned short: us_max, \
+  int: i_max, \
+  unsigned int: ui_max, \
+  long: l_max, \
+  unsigned long: ul_max, \
+  long long: ll_max, \
+  unsigned long long: ull_max, \
+  const void*: p_max, \
+  const BYTE*: pb_max \
+)((a), (b))
+
+#undef ZSTD_DEFINE_MIN_GENERIC_TYPE
+
+#define MIN(a,b) MIN_GENERIC((a), (b))
+#define MAX(a,b) MAX_GENERIC((a), (b))
+
+#define CMIN(a,b) ((a)<(b) ? (a) : (b))
+#define CMAX(a,b) ((a)>=(b) ? (a) : (b))
+#define CBOUNDED(min,val,max) (CMAX((min),CMIN((val),(max))))
+#define BOUNDED(min,val,max) (MAX((min),MIN((val),(max))))
 
 
 /*-*************************************
@@ -108,11 +200,11 @@ typedef enum { set_basic, set_rle, set_compressed, set_repeat } symbolEncodingTy
 #define MaxLL   35
 #define DefaultMaxOff 28
 #define MaxOff  31
-#define MaxSeq MAX(MaxLL, MaxML)   /* Assumption : MaxOff < MaxLL,MaxML */
+#define MaxSeq CMAX(MaxLL, MaxML)   /* Assumption : MaxOff < MaxLL,MaxML */
 #define MLFSELog    9
 #define LLFSELog    9
 #define OffFSELog   8
-#define MaxFSELog  MAX(MAX(MLFSELog, LLFSELog), OffFSELog)
+#define MaxFSELog  CMAX(CMAX(MLFSELog, LLFSELog), OffFSELog)
 
 #define ZSTD_MAX_HUF_HEADER_SIZE 128 /* header + <= 127 byte tree description */
 /* Each table cannot take more than #symbols * FSELog bits */

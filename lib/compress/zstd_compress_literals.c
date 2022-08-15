@@ -57,7 +57,7 @@ size_t ZSTD_noCompressLiterals (void* dst, size_t dstCapacity, const void* src, 
             MEM_writeLE32(ostart, (U32)((U32)set_basic + (3<<2) + (srcSize<<4)));
             break;
         default:   /* not necessary : flSize is {1,2,3} */
-            assert(0);
+            _assume(0);
     }
 
     ZSTD_memcpy(ostart + flSize, src, srcSize);
@@ -84,7 +84,7 @@ size_t ZSTD_compressRleLiteralsBlock (void* dst, size_t dstCapacity, const void*
             MEM_writeLE32(ostart, (U32)((U32)set_rle + (3<<2) + (srcSize<<4)));
             break;
         default:   /* not necessary : flSize is {1,2,3} */
-            assert(0);
+            _assume(0);
     }
 
     ostart[flSize] = *(const BYTE*)src;
@@ -180,7 +180,7 @@ size_t ZSTD_compressLiterals (ZSTD_hufCTables_t const* prevHuf,
             break;
         }
     default:  /* not possible : lhSize is {3,4,5} */
-        assert(0);
+        _assume(0);
     }
     DEBUGLOG(5, "Compressed literals: %u -> %u", (U32)srcSize, (U32)(lhSize+cLitSize));
     return lhSize+cLitSize;

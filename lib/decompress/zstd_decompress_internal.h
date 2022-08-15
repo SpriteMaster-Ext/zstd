@@ -115,7 +115,7 @@ typedef struct {
 #define ZSTD_LBMAX (128 << 10)
 
 /* extra buffer, compensates when dst is not large enough to store litBuffer */
-#define ZSTD_LITBUFFEREXTRASIZE  BOUNDED(ZSTD_LBMIN, ZSTD_DECODER_INTERNAL_BUFFER, ZSTD_LBMAX)
+#define ZSTD_LITBUFFEREXTRASIZE  CBOUNDED(ZSTD_LBMIN, ZSTD_DECODER_INTERNAL_BUFFER, ZSTD_LBMAX)
 
 typedef enum {
     ZSTD_not_in_dst = 0,  /* Stored entirely within litExtraBuffer */
@@ -143,7 +143,7 @@ struct ZSTD_DCtx_s
     ZSTD_dStage stage;
     U32 litEntropy;
     U32 fseEntropy;
-    XXH64_state_t xxhState;
+    XXH3_state_t xxhState;
     size_t headerSize;
     ZSTD_format_e format;
     ZSTD_forceIgnoreChecksum_e forceIgnoreChecksum;   /* User specified: if == 1, will ignore checksums in compressed frame. Default == 0 */

@@ -96,9 +96,9 @@ static void ZDICT_printHex(const void* ptr, size_t length)
 /*-********************************************************
 *  Helper functions
 **********************************************************/
-unsigned ZDICT_isError(size_t errorCode) { return ERR_isError(errorCode); }
+ZDICTLIB_API_USED unsigned ZDICTLIB_ABI_USED ZDICT_isError(size_t errorCode) { return ERR_isError(errorCode); }
 
-const char* ZDICT_getErrorName(size_t errorCode) { return ERR_getErrorName(errorCode); }
+ZDICTLIB_API_USED const char* ZDICTLIB_ABI_USED ZDICT_getErrorName(size_t errorCode) { return ERR_getErrorName(errorCode); }
 
 unsigned ZDICT_getDictID(const void* dictBuffer, size_t dictSize)
 {
@@ -870,7 +870,7 @@ size_t ZDICT_finalizeDictionary(void* dictBuffer, size_t dictBufferCapacity,
 
     /* dictionary header */
     MEM_writeLE32(header, ZSTD_MAGIC_DICTIONARY);
-    {   U64 const randomID = XXH64(customDictContent, dictContentSize, 0);
+    {   U64 const randomID = XXH3_64bits(customDictContent, dictContentSize);
         U32 const compliantID = (randomID % ((1U<<31)-32768)) + 32768;
         U32 const dictID = params.dictID ? params.dictID : compliantID;
         MEM_writeLE32(header+4, dictID);
@@ -954,7 +954,7 @@ static size_t ZDICT_addEntropyTablesFromBuffer_advanced(
 
     /* add dictionary header (after entropy tables) */
     MEM_writeLE32(dictBuffer, ZSTD_MAGIC_DICTIONARY);
-    {   U64 const randomID = XXH64((char*)dictBuffer + dictBufferCapacity - dictContentSize, dictContentSize, 0);
+    {   U64 const randomID = XXH3_64bits((char*)dictBuffer + dictBufferCapacity - dictContentSize, dictContentSize);
         U32 const compliantID = (randomID % ((1U<<31)-32768)) + 32768;
         U32 const dictID = params.dictID ? params.dictID : compliantID;
         MEM_writeLE32((char*)dictBuffer+4, dictID);
@@ -1098,7 +1098,7 @@ size_t ZDICT_trainFromBuffer_legacy(void* dictBuffer, size_t dictBufferCapacity,
 }
 
 
-size_t ZDICT_trainFromBuffer(void* dictBuffer, size_t dictBufferCapacity,
+ZDICTLIB_API_USED size_t ZDICTLIB_ABI_USED ZDICT_trainFromBuffer(void* dictBuffer, size_t dictBufferCapacity,
                              const void* samplesBuffer, const size_t* samplesSizes, unsigned nbSamples)
 {
     ZDICT_fastCover_params_t params;

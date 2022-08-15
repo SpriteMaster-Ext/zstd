@@ -21,20 +21,18 @@ extern "C" {
 
 /* *** Dependencies *** */
 #include "zstd_deps.h"    /* size_t */
-
+#include "zstd.common.h"
 
 /* *** library symbols visibility *** */
 /* Note : when linking with -fvisibility=hidden on gcc, or by default on Visual,
  *        HUF symbols remain "private" (internal symbols for library only).
  *        Set macro FSE_DLL_EXPORT to 1 if you want HUF symbols visible on DLL interface */
-#if defined(FSE_DLL_EXPORT) && (FSE_DLL_EXPORT==1) && defined(__GNUC__) && (__GNUC__ >= 4)
-#  define HUF_PUBLIC_API __attribute__ ((visibility ("default")))
-#elif defined(FSE_DLL_EXPORT) && (FSE_DLL_EXPORT==1)   /* Visual expected */
-#  define HUF_PUBLIC_API __declspec(dllexport)
-#elif defined(FSE_DLL_IMPORT) && (FSE_DLL_IMPORT==1)
-#  define HUF_PUBLIC_API __declspec(dllimport)  /* not required, just to generate faster code (saves a function pointer load from IAT and an indirect jump) */
+#if FSE_DLL_EXPORT == 1 || FSE_DLL_IMPORT == 1
+# define HUF_PUBLIC_API ZSTD_EXPORT_API
+# define HUF_PUBLIC_ABI ZSTD_EXPORT_ABI
 #else
-#  define HUF_PUBLIC_API
+# define HUF_PUBLIC_API
+# define HUF_PUBLIC_ABI
 #endif
 
 

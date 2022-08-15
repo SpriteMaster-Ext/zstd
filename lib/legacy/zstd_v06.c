@@ -8,6 +8,7 @@
  * You may select, at your option, one of the above-listed licenses.
  */
 
+#if (ZSTD_LEGACY_SUPPORT != 0 && ZSTD_LEGACY_SUPPORT <= 6)
 
 /*- Dependencies -*/
 #include "zstd_v06.h"
@@ -4152,3 +4153,7 @@ size_t ZBUFFv06_decompressContinue(ZBUFFv06_DCtx* zbd,
 ***************************************/
 size_t ZBUFFv06_recommendedDInSize(void)  { return ZSTDv06_BLOCKSIZE_MAX + ZSTDv06_blockHeaderSize /* block header size*/ ; }
 size_t ZBUFFv06_recommendedDOutSize(void) { return ZSTDv06_BLOCKSIZE_MAX; }
+
+#else
+static void Empty() {};
+#endif

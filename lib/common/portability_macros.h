@@ -83,7 +83,7 @@
       && !defined(__BMI2__)
   #  define DYNAMIC_BMI2 1
   #else
-  #  define DYNAMIC_BMI2 0
+  #  define DYNAMIC_BMI2 1
   #endif
 #endif
 
@@ -111,7 +111,7 @@
 #    define ZSTD_ASM_SUPPORTED 0
 #  endif
 #else
-#  define ZSTD_ASM_SUPPORTED 0
+#  define ZSTD_ASM_SUPPORTED 1
 #endif
 
 /**

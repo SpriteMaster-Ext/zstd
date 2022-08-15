@@ -40,7 +40,11 @@ extern "C" {
 /* static assert is triggered at compile time, leaving no runtime artefact.
  * static assert only works with compile-time constants.
  * Also, this variant can only be used inside a function. */
-#define DEBUG_STATIC_ASSERT(c) (void)sizeof(char[(c) ? 1 : -1])
+#if __STDC_VERSION__ >= 201112L
+# define DEBUG_STATIC_ASSERT(c) _Static_assert(c, #c)
+#else
+# define DEBUG_STATIC_ASSERT(c) (void)sizeof(char[(c) ? 1 : -1])
+#endif
 
 
 /* DEBUGLEVEL is expected to be defined externally,
@@ -69,10 +73,21 @@ extern "C" {
 #if (DEBUGLEVEL>=1)
 #  define ZSTD_DEPS_NEED_ASSERT
 #  include "zstd_deps.h"
+#  define _assume(...) assert(__VA_ARGS__)
 #else
 #  ifndef assert   /* assert may be already defined, due to prior #include <assert.h> */
-#    define assert(condition) ((void)0)   /* disable assert (default) */
+#    define assert(condition) _assume(condition)   /* disable assert (default) */
 #  endif
+
+#if __clang__
+# define _assume(expression) __builtin_assume(expression)
+#elif __GNUC__
+# define _assume(expression) ({ if (!(expression)) __builtin_unreachable(); })
+#elif _MSC_VER
+# define _assume(expression) __assume(expression)
+#else
+# define _assume(expression) ((void)0)
+#endif
 #endif
 
 #if (DEBUGLEVEL>=2)

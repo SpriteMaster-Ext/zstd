@@ -385,7 +385,7 @@ struct ZSTD_CCtx_s {
     unsigned long long pledgedSrcSizePlusOne;  /* this way, 0 (default) == unknown */
     unsigned long long consumedSrcSize;
     unsigned long long producedCSize;
-    XXH64_state_t xxhState;
+    XXH3_state_t xxhState;
     ZSTD_customMem customMem;
     ZSTD_threadPool* pool;
     size_t staticSize;

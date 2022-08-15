@@ -283,7 +283,7 @@ ZSTD_buildCTable(void* dst, size_t dstCapacity,
             return NCountSize;
         }
     }
-    default: assert(0); RETURN_ERROR(GENERIC, "impossible to reach");
+    default: _assume(0);
     }
 }
 
