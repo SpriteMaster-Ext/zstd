@@ -70,6 +70,8 @@ flags=( \
 	"-ftree-loop-ivcanon" \
 	"-fstdarg-opt" \
 	"-mtune=znver3" \
+	"-fdata-sections" \
+	"-ffunction-sections" \
 )
 
 ld_flags=( \

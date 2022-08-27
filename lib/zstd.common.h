@@ -17,8 +17,10 @@
 
 #if defined(__clang__) || (defined(__GNUC__) && (__GNUC__ >= 4))
 #	define ZSTD_VISIBLE __attribute__((visibility("default")))
+#	define ZSTDLIB_HIDDEN __attribute__((visibility("hidden")))
 #else
 #	define ZSTD_VISIBLE
+#	define ZSTDLIB_HIDDEN
 #endif
 
 #if WIN32
@@ -80,8 +82,8 @@
 #	define ZSTD_PURE __declspec(noalias)
 #	define ZSTD_FLATTEN
 #	define ZSTD_LEAF
-#	define ZSTD_ALLOC
-#	define ZSTD_NORETURN
+#	define ZSTD_ALLOC __declspec(restrict)
+#	define ZSTD_NORETURN __declspec(noreturn)
 #	define ZSTD_HOT
 #	define ZSTD_COLD
 #	define ZSTD_LIKELY(expr) (expr)

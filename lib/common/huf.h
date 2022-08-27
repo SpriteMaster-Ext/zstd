@@ -21,7 +21,7 @@ extern "C" {
 
 /* *** Dependencies *** */
 #include "zstd_deps.h"    /* size_t */
-#include "zstd.common.h"
+#include "../zstd.common.h"
 
 /* *** library symbols visibility *** */
 /* Note : when linking with -fvisibility=hidden on gcc, or by default on Visual,

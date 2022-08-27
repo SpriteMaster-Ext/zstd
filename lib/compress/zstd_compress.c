@@ -65,7 +65,7 @@
  * the overhead of headers can make the compressed data to be larger than the
  * return value of ZSTD_compressBound().
  */
-size_t ZSTDLIB_ABI_USED ZSTD_compressBound(size_t srcSize) {
+ZSTD_CONST size_t ZSTDLIB_ABI_USED ZSTD_compressBound(size_t srcSize) {
     return ZSTD_COMPRESSBOUND(srcSize);
 }
 
@@ -90,7 +90,7 @@ struct ZSTD_CDict_s {
                                            */
 };  /* typedef'd to ZSTD_CDict within "zstd.h" */
 
-ZSTDLIB_API_USED ZSTD_CCtx* ZSTDLIB_ABI_USED ZSTD_createCCtx(void)
+ZSTDLIB_API_USED ZSTD_ALLOC ZSTD_CCtx* ZSTDLIB_ABI_USED ZSTD_createCCtx(void)
 {
     return ZSTD_createCCtx_advanced(ZSTD_defaultCMem);
 }
@@ -5249,9 +5249,9 @@ size_t ZSTDLIB_ABI_USED ZSTD_freeCStream(ZSTD_CStream* zcs)
 
 /*======   Initialization   ======*/
 
-size_t ZSTDLIB_ABI_USED ZSTD_CStreamInSize(void)  { return ZSTD_BLOCKSIZE_MAX; }
+ZSTD_CONST size_t ZSTDLIB_ABI_USED ZSTD_CStreamInSize(void)  { return ZSTD_BLOCKSIZE_MAX; }
 
-size_t ZSTDLIB_ABI_USED ZSTD_CStreamOutSize(void)
+ZSTD_CONST size_t ZSTDLIB_ABI_USED ZSTD_CStreamOutSize(void)
 {
     return ZSTD_compressBound(ZSTD_BLOCKSIZE_MAX) + ZSTD_blockHeaderSize + 4 /* 32-bits hash */ ;
 }
@@ -6375,9 +6375,9 @@ size_t ZSTDLIB_ABI_USED ZSTD_endStream(ZSTD_CStream* zcs, ZSTD_outBuffer* output
 /*-=====  Pre-defined compression levels  =====-*/
 #include "clevels.h"
 
-int ZSTDLIB_ABI_USED ZSTD_maxCLevel(void) { return ZSTD_MAX_CLEVEL; }
-int ZSTDLIB_ABI_USED ZSTD_minCLevel(void) { return (int)-ZSTD_TARGETLENGTH_MAX; }
-int ZSTD_defaultCLevel(void) { return ZSTD_CLEVEL_DEFAULT; }
+ZSTD_CONST int ZSTDLIB_ABI_USED ZSTD_maxCLevel(void) { return ZSTD_MAX_CLEVEL; }
+ZSTD_CONST int ZSTDLIB_ABI_USED ZSTD_minCLevel(void) { return (int)-ZSTD_TARGETLENGTH_MAX; }
+ZSTD_CONST int ZSTD_defaultCLevel(void) { return ZSTD_CLEVEL_DEFAULT; }
 
 static ZSTD_compressionParameters ZSTD_dedicatedDictSearch_getCParams(int const compressionLevel, size_t const dictSize)
 {

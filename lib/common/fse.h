@@ -24,7 +24,7 @@ extern "C" {
 *  Dependencies
 ******************************************/
 #include "zstd_deps.h"    /* size_t, ptrdiff_t */
-#include "zstd.common.h"
+#include "../zstd.common.h"
 
 /*-*****************************************
 *  FSE_PUBLIC_API : control library symbols visibility
