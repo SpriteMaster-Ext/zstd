@@ -35,7 +35,7 @@ jobs:
       shell: bash
       run: |
         sudo apt update
-        sudo apt install zsh gcc-11 binutils -y
+        sudo apt install zsh make gcc-11 binutils -y
     - name: linux build
       working-directory: ./build/test
       shell: bash
