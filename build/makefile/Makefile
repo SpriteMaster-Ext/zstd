@@ -49,10 +49,8 @@ CFLAGS += $(addprefix -D, $(DEFINES))
 CFLAGS += \
 	-std=gnu2x \
 	-g0 \
-	-flto \
 	-fno-exceptions \
 	-fvisibility=hidden \
-	-fno-semantic-interposition \
 	-fmerge-all-constants \
 	-mtune=znver3 \
 	-fdata-sections \
@@ -75,6 +73,8 @@ LDFLAGS += $(addprefix $(LINKER_PREFIX), $(LINK_FLAGS))
 
 CFLAGS_gcc := \
 	-O3 \
+	-flto \
+	-fno-semantic-interposition \
 	-fdelete-dead-exceptions \
 	-fallow-store-data-races \
 	-fdevirtualize-speculatively \
@@ -102,11 +102,13 @@ LINK_FLAGS :=
 LINK_FLAGS_clang := \
 		--icf=all \
 		-dead_strip
+CFLAGS_clang += -flto=thin
 else
 LINK_FLAGS_clang := \
 		--icf=all \
 		--ignore-data-address-equality \
 		--ignore-function-address-equality
+CFLAGS_clang += -flto -fno-semantic-interposition
 endif
 		
 LDFLAGS_clang += $(addprefix $(LINKER_PREFIX), $(LINK_FLAGS_clang))
