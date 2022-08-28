@@ -11,10 +11,13 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+         ref: 'spritemaster'
     - name: macintosh build
       working-directory: ./build/test
       run: |
-        make build CC=clang EXTENSION=.dylib
+        make build CC=clang EXTENSION=.dylib; \
+        ls -la
     - name: upload macintosh artifact
       uses: actions/upload-artifact@v3
       with:
@@ -26,10 +29,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+         ref: 'spritemaster'
+    - run: |
+      sudo apt update
+      sudo apt install gcc-11 binutils -y
+      shell: bash
     - name: linux build
       working-directory: ./build/test
+      shell: bash
       run: |
-        make build CC=gcc EXTENSION=.so
+        make build CC=gcc-11 EXTENSION=.so; \
         ls -la
     - name: upload linux artifact
       uses: actions/upload-artifact@v3
