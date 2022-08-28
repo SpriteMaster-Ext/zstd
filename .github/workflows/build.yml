@@ -3,6 +3,8 @@ name: build-artifacts
 on:
   pull_request:
     branches: [ spritemaster ]
+  push:
+    branches: [ spritemaster ]
 
 jobs:
   build-mac:
