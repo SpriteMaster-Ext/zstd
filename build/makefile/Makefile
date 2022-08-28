@@ -101,7 +101,7 @@ ifeq ($(shell uname -s),Darwin)
 LINK_FLAGS := 
 LINK_FLAGS_clang := \
 		--icf=all \
-		-Wl,-dead_strip
+		-dead_strip
 else
 LINK_FLAGS_clang := \
 		--icf=all \
@@ -119,6 +119,8 @@ CFLAGS += $(CFLAGS_clang)
 LDFLAGS += $(LDFLAGS_clang)
 endif
 
+STRIPFLAGS += -Sx
+
 OUT_NAME ?= libzstd
 EXTENSION ?= .so
 
@@ -129,7 +131,7 @@ shared: $(OUT_NAME)$(EXTENSION)
 $(OUT_NAME)$(EXTENSION): Makefile flags.sh $(SOURCE_FILES)
 	rm -f $(OUT_NAME)$(EXTENSION); \
 	$(CC) -shared -o $(OUT_NAME)$(EXTENSION) -fPIC $(CFLAGS) $(LDFLAGS) $(SOURCE_FILES); \
-	strip --strip-debug --strip-unneeded --discard-all $(OUT_NAME)$(EXTENSION)
+	strip $(STRIPFLAGS) $(OUT_NAME)$(EXTENSION)
 	
 *.c:
 
