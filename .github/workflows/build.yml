@@ -14,14 +14,14 @@ jobs:
       with:
          ref: 'spritemaster'
     - name: macintosh build
-      working-directory: ./build/test
+      working-directory: ./build/makefile
       run: |
         make shared CC=clang OUT_NAME=libzstd EXTENSION=.dylib
     - name: upload macintosh artifact
       uses: actions/upload-artifact@v3
       with:
         name: libzstd.dylib
-        path: ./build/test/libzstd.dylib
+        path: ./build/makefile/libzstd.dylib
         if-no-files-found: error
 
   build-linux:
@@ -36,7 +36,7 @@ jobs:
         sudo apt update
         sudo apt install zsh make gcc-11 binutils -y
     - name: linux build
-      working-directory: ./build/test
+      working-directory: ./build/makefile
       shell: bash
       run: |
         make shared CC=gcc-11 OUT_NAME=libzstd EXTENSION=.so
@@ -44,6 +44,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: libzstd.so
-        path: ./build/test/libzstd.so
+        path: ./build/makefile/libzstd.so
         if-no-files-found: error
         
