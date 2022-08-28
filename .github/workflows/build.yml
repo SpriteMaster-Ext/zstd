@@ -1,0 +1,37 @@
+name: build-artifacts
+
+on:
+  pull_request:
+    branches: [ spritemaster ]
+
+jobs:
+  build-mac
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: 'spritemaster'
+    - name: macintosh build
+      run: |
+        cd build/test && \
+        make build CC=clang EXTENSION=.dylib
+    - name: upload macintosh artifact
+      uses: actions/upload-artifact@v3
+      with:
+        path: build/test/libzstd.dylib
+
+  mingw-cross-compilation:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: 'spritemaster'
+    - name: linux build
+      run: |
+        cd build/test && \
+        make build CC=gcc EXTENSION=.so
+    - name: upload macintosh artifact
+      uses: actions/upload-artifact@v3
+      with:
+        path: build/test/libzstd.so
+        

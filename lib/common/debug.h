@@ -41,7 +41,7 @@ extern "C" {
  * static assert only works with compile-time constants.
  * Also, this variant can only be used inside a function. */
 #if __STDC_VERSION__ >= 201112L
-# define DEBUG_STATIC_ASSERT(c) _Static_assert(c, #c)
+# define DEBUG_STATIC_ASSERT(c) sizeof(struct { _Static_assert((c), #c); int dummy; });
 #else
 # define DEBUG_STATIC_ASSERT(c) (void)sizeof(char[(c) ? 1 : -1])
 #endif
