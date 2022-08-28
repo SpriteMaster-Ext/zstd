@@ -97,10 +97,17 @@ LINK_FLAGS_gcc := \
 	
 LDFLAGS_gcc += $(addprefix $(LINKER_PREFIX), $(LINK_FLAGS_gcc))
 
+ifeq ($(shell uname -s),Darwin)
+LINK_FLAGS := 
+LINK_FLAGS_clang := \
+		--icf=all \
+		-Wl,-dead_strip
+else
 LINK_FLAGS_clang := \
 		--icf=all \
 		--ignore-data-address-equality \
 		--ignore-function-address-equality
+endif
 		
 LDFLAGS_clang += $(addprefix $(LINKER_PREFIX), $(LINK_FLAGS_clang))
 
