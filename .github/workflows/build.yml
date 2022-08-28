@@ -35,12 +35,12 @@ jobs:
       shell: bash
       run: |
         sudo apt update
-        sudo apt install gcc-11 binutils -y
+        sudo apt install zsh gcc-11 binutils -y
     - name: linux build
       working-directory: ./build/test
       shell: bash
       run: |
-        make build CC=gcc-11 EXTENSION=.so; \
+        make build CC=gcc-11 EXTENSION=.so
         ls -la
     - name: upload linux artifact
       uses: actions/upload-artifact@v3
