@@ -12,24 +12,24 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: macintosh build
+      working-directory: ./build/test
       run: |
-        cd build/test && \
         make build CC=clang EXTENSION=.dylib
     - name: upload macintosh artifact
       uses: actions/upload-artifact@v3
       with:
-        path: build/test/libzstd.dylib
+        path: ./build/test/libzstd.dylib
 
   build-linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: linux build
+      working-directory: ./build/test
       run: |
-        cd build/test && \
         make build CC=gcc EXTENSION=.so
-    - name: upload macintosh artifact
+    - name: upload linux artifact
       uses: actions/upload-artifact@v3
       with:
-        path: build/test/libzstd.so
+        path: ./build/test/libzstd.so
         
