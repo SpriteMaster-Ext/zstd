@@ -18,7 +18,7 @@ jobs:
       run: |
         chmod +x flags.sh
         ./flags.sh clang
-        make build CC=clang EXTENSION=.dylib
+        make build CC=clang OUT_NAME=libzstd EXTENSION=.dylib
         ls -la
     - name: upload macintosh artifact
       uses: actions/upload-artifact@v3
@@ -44,7 +44,7 @@ jobs:
       run: |
         chmod +x flags.sh
         ./flags.sh gcc-11
-        make build CC=gcc-11 EXTENSION=.so
+        make build CC=gcc-11 OUT_NAME=libzstd EXTENSION=.so
         ls -la
     - name: upload linux artifact
       uses: actions/upload-artifact@v3
