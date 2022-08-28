@@ -18,7 +18,9 @@ jobs:
     - name: upload macintosh artifact
       uses: actions/upload-artifact@v3
       with:
+        name: libzstd.dylib
         path: ./build/test/libzstd.dylib
+        if-no-files-found: error
 
   build-linux:
     runs-on: ubuntu-latest
@@ -28,8 +30,11 @@ jobs:
       working-directory: ./build/test
       run: |
         make build CC=gcc EXTENSION=.so
+        ls -la
     - name: upload linux artifact
       uses: actions/upload-artifact@v3
       with:
+        name: libzstd.so
         path: ./build/test/libzstd.so
+        if-no-files-found: error
         
