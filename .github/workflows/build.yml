@@ -31,10 +31,11 @@ jobs:
     - uses: actions/checkout@v3
       with:
          ref: 'spritemaster'
-    - run: |
-      sudo apt update
-      sudo apt install gcc-11 binutils -y
+    - name: aptitude
       shell: bash
+      run: |
+        sudo apt update
+        sudo apt install gcc-11 binutils -y
     - name: linux build
       working-directory: ./build/test
       shell: bash
