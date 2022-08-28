@@ -16,7 +16,9 @@ jobs:
     - name: macintosh build
       working-directory: ./build/test
       run: |
-        make build CC=clang EXTENSION=.dylib; \
+        chmod +x flags.sh
+        ./flags.sh clang
+        make build CC=clang EXTENSION=.dylib
         ls -la
     - name: upload macintosh artifact
       uses: actions/upload-artifact@v3
@@ -40,6 +42,7 @@ jobs:
       working-directory: ./build/test
       shell: bash
       run: |
+        chmod +x flags.sh
         ./flags.sh gcc-11
         make build CC=gcc-11 EXTENSION=.so
         ls -la
