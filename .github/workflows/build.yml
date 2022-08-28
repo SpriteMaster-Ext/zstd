@@ -16,7 +16,9 @@ jobs:
     - name: macintosh build
       working-directory: ./build/makefile
       run: |
-        export PATH="$(brew --prefix llvm@14)/bin/clang:${PATH}"
+        export PATH="$(brew --prefix llvm@14)/bin:${PATH}"
+        export LD="$(brew --prefix llvm@14)/bin/ld.lld"
+        ls -la "$(brew --prefix llvm@14)/bin)"
         make shared CC=$(brew --prefix llvm@14)/bin/clang OUT_NAME=libzstd EXTENSION=.dylib
     - name: upload macintosh artifact
       uses: actions/upload-artifact@v3
