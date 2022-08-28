@@ -40,6 +40,7 @@ jobs:
       working-directory: ./build/test
       shell: bash
       run: |
+        ./flags.sh gcc-11
         make build CC=gcc-11 EXTENSION=.so
         ls -la
     - name: upload linux artifact
