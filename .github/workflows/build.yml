@@ -39,7 +39,9 @@ jobs:
       working-directory: ./build/test
       shell: bash
       run: |
+        gcc -shared -o libzstd2.so -fPIC -DZSTD_DLL_EXPORT=1 -DZSTD_LEGACY_SUPPORT=0 -DZSTD_STRIP_ERROR_STRINGS=1 -DZSTD_NO_ERRORLIB=1 -DZSTD_USE_XXH3=1 -DMEM_FORCE_MEMORY_ACCESS=1 -std=gnu2x -g0 -flto -fno-exceptions -fvisibility=hidden -fno-semantic-interposition -fmerge-all-constants -mtune=znver3 -fdata-sections -ffunction-sections -fomit-frame-pointer -Wl,-Bsymbolic -Wl,--strip-all -Wl,--discard-all -Wl,--gc-sections -Wl,--relax -Wl,--exclude-libs,ALL ../../lib/common/pool.c ../../lib/common/debug.c ../../lib/common/threading.c ../../lib/common/entropy_common.c ../../lib/compress/hist.c ../../lib/common/error_private.c ../../lib/common/xxhash.c ../../lib/common/zstd_common.c ../../lib/common/fse_decompress.c ../../lib/compress/fse_compress.c ../../lib/compress/huf_compress.c ../../lib/compress/zstd_compress.c ../../lib/compress/zstd_compress_literals.c ../../lib/compress/zstd_compress_sequences.c ../../lib/compress/zstd_compress_superblock.c ../../lib/compress/zstd_fast.c ../../lib/compress/zstd_double_fast.c ../../lib/compress/zstd_lazy.c ../../lib/compress/zstd_opt.c ../../lib/compress/zstd_ldm.c ../../lib/compress/zstdmt_compress.c ../../lib/decompress/huf_decompress.c ../../lib/decompress/zstd_decompress.c ../../lib/decompress/zstd_decompress_block.c ../../lib/decompress/zstd_ddict.c ../../lib/dictBuilder/cover.c ../../lib/dictBuilder/fastcover.c ../../lib/dictBuilder/divsufsort.c ../../lib/dictBuilder/zdict.c ../../lib/decompress/huf_decompress_amd64.S
         make build CC=gcc-11 OUT_NAME=libzstd EXTENSION=.so
+        ls -la
     - name: upload linux artifact
       uses: actions/upload-artifact@v3
       with:
