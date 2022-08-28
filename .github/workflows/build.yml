@@ -20,7 +20,7 @@ jobs:
       with:
         path: build/test/libzstd.dylib
 
-  mingw-cross-compilation:
+  build-linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
