@@ -19,6 +19,21 @@ jobs:
         export PATH="$(brew --prefix llvm@14)/bin:${PATH}"
         export LD="$(brew --prefix llvm@14)/bin/ld.lld"
         make shared CC=$(brew --prefix llvm@14)/bin/clang OUT_NAME=libzstd EXTENSION=.dylib
+    - name: sign macintosh artifact
+      working-directory: ./build/makefile
+      env:
+        APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+        APPLE_CERTIFICATE_PWD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        KEYCHAIN: build.keychain
+        KEYCHAIN_PWD: build.keychain.pwd.${{ github.run_id }}.${{ github.run_attempt }}
+      run: |
+        echo $APPLE_CERTIFICATE | base64 --decode > certificate.p12
+        security create-keychain -p $KEYCHAIN_PWD $KEYCHAIN
+        security default-keychain -s $KEYCHAIN
+        security unlock-keychain -p $KEYCHAIN_PWD $KEYCHAIN
+        security import certificate.p12 -k $KEYCHAIN -P $APPLE_CERTIFICATE_PWD -T /usr/bin/codesign
+        security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $KEYCHAIN_PWD $KEYCHAIN
+        /usr/bin/codesign --force -s "$(security find-identity -v)" libzstd.dylib -v
     - name: upload macintosh artifact
       uses: actions/upload-artifact@v3
       with:
