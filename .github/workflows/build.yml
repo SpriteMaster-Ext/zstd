@@ -32,12 +32,18 @@ jobs:
         security create-keychain -p "$KEYCHAIN_PWD" $KEYCHAIN
         echo b
         security default-keychain -s $KEYCHAIN
+        echo c
         security unlock-keychain -p "$KEYCHAIN_PWD" $KEYCHAIN
+        echo d
         security import certificate.p12 -k $KEYCHAIN -P "$APPLE_CERTIFICATE_PWD" -T /usr/bin/codesign
+        echo e
         security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $KEYCHAIN_PWD $KEYCHAIN
-        echo $(security find-identity -p codesigning -v)
-        echo $(security find-identity -v)
+        echo f
+        echo identity-pv: $(security find-identity -p codesigning -v)
+        echo identity-v: $(security find-identity -v)
+        echo g
         /usr/bin/codesign --force -s "$(security find-identity -v)" libzstd.dylib -v
+        echo h
     - name: upload macintosh artifact
       uses: actions/upload-artifact@v3
       with:
