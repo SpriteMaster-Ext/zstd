@@ -28,7 +28,9 @@ jobs:
         KEYCHAIN_PWD: build.keychain.pwd.${{ github.run_id }}.${{ github.run_attempt }}
       run: |
         echo $APPLE_CERTIFICATE | base64 --decode > certificate.p12
+        echo a
         security create-keychain -p "$KEYCHAIN_PWD" $KEYCHAIN
+        echo b
         security default-keychain -s $KEYCHAIN
         security unlock-keychain -p "$KEYCHAIN_PWD" $KEYCHAIN
         security import certificate.p12 -k $KEYCHAIN -P "$APPLE_CERTIFICATE_PWD" -T /usr/bin/codesign
